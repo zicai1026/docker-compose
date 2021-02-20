@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  nacos:
+    image: nacos/nacos-server
+    container_name: nacos
+    ports:
+      - 8848:8848
+    environment:
+      - MODE=standalone
+    volumes:
+      - ./nacos/logs:/home/nacos/logs

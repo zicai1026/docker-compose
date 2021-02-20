@@ -1,0 +1,70 @@
+version: '3'
+
+networks:
+  default:
+    external:
+      name: devnet
+
+services:
+  nacos:
+    image: nacos/nacos-server
+    container_name: nacos
+    ports:
+      - 8848:8848
+    environment:
+      - MODE=standalone
+    volumes:
+      - /mnt/e/Docker/volumes/nacos/logs:/home/nacos/logs
+
+  sentinel:
+    image: bladex/sentinel-dashboard
+    container_name: sentinel
+    ports:
+      - 8858:8858
+    environment:
+      - JAVA_OPTS=-Dsentinel.dashboard.auth.username=admin -Dsentinel.dashboard.auth.password=admin123
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - 9410:9410
+      - 9411:9411
+
+  zookeeper:
+    image: zookeeper
+    container_name: zookeeper
+    ports:
+      - 2181:2181
+    volumes:
+      - /mnt/e/Docker/volumes/zookeeper/data:/data
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - /mnt/e/Docker/volumes/rabbitmq/data:/var/lib/rabbitmq/mnesia
+
+  elasticsearch:
+    image: elasticsearch:6.8.11
+    container_name: elasticsearch
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - discovery.type=single-node
+
+  xxl-job-admin:
+    image: xuxueli/xxl-job-admin:2.2.0
+    container_name: xxl-job-admin
+    ports:
+      - 8099:8080
+    volumes:
+      - /mnt/e/Docker/volumes/xxlJob/applogs:/data/applogs
+    environment:
+      - PARAMS="--spring.datasource.url=jdbc:mysql://192.168.200.35:3306/wuhan_sems_job?Unicode=true&characterEncoding=UTF-8 --spring.datasource.username=devcoder --spring.datasource.password=Devcoder@gxtY__2019!@#"
+
+
