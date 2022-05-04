@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  v2raya:
+    image: mzz2017/v2raya:1.5.6.2
+    container_name: v2raya
+    restart: always
+    ports:
+      - 2017:2017
+      - 20170-20172:20170-20172
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - ./v2raya/data:/etc/v2raya

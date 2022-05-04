@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  subconverter:
+    # https://github.com/tindy2013/subconverter/blob/master/README-docker.md
+    image: tindy2013/subconverter
+    container_name: subconverter
+    volumes:
+      - ./subconverter/data:/base
+    ports:
+      - 25500:25500
+
+  subweb:
+    # https://github.com/CareyWang/sub-web
+    image: careywong/subweb
+    container_name: subweb
+    volumes:
+      - ./subweb/data:/app
+    ports:
+      - 58080:80

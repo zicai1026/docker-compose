@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  clash:
+    # ghcr.io/dreamacro/clash
+    # ghcr.io/dreamacro/clash-premium
+    # dreamacro/clash
+    # dreamacro/clash-premium
+    image: dreamacro/clash-premium
+    container_name: clash
+    volumes:
+      - ./clash/data:/root/.config/clash
+      - ./clash/dashboard:/ui
+    ports:
+      - 7890:7890
+      - 7891:7891
+      - 9090:9090
+      # - "8080:8080" # external controller (Restful API)
+    # # TUN
+    # cap_add:
+    #   - NET_ADMIN
+    # devices:
+    #   - /dev/net/tun
+    restart: always
+    # "bridge" or "host" on Linux
+    # network_mode: "bridge" 
