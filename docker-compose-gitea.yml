@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  gitea-server:
+    container_name: gitea-server
+    image: gitea/gitea:latest-rootless
+    restart: unless-stopped
+    volumes:
+      - ./gitea-server-data:/var/lib/gitea
+      - ./gitea-server-config:/etc/gitea
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 3000:3000
+      - 2222:2222
+
+  gitea-runner:
+    container_name: gitea-runner
+    image: gitea/act_runner:latest
+    depends_on:
+      - gitea-server
+    environment:
+      CONFIG_FILE: /config.yaml
+      GITEA_INSTANCE_URL: http://gitea-server:3000
+      GITEA_RUNNER_REGISTRATION_TOKEN: 99QT3nf8ehafJNJ4zGvtFXD3Lp9eb41eG93QO71H
+      GITEA_RUNNER_NAME: gitea-runner
+      GITEA_RUNNER_LABELS: gitea-runner-docker
+    volumes:
+      - ./gitea-runner-data/config.yaml:/config.yaml
+      - ./gitea-runner-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
