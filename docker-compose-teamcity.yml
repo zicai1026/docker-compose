@@ -1,0 +1,48 @@
+version: '3.1'
+
+
+# Default ${TEAMCITY_VERSION} is defined in .env file
+
+# ./buildserver_pgdata - Posgres DB data
+# ./data_dir - TeamCity data directory
+# ./teamcity-server-logs - logs of primary TeamCity server
+# ./agents/agent-1/conf - configuration directory for the first build agent
+# ./agents/agent-1/conf - configuration directory for the second build agent
+
+services:
+  teamcity-db:
+    image: postgres:latest
+    container_name: teamcity-db
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=teamcity_password
+      - POSTGRES_USER=teamcity_user
+      - POSTGRES_DB=teamcity_db
+      - PG_DATA=/var/lib/postgresql/data
+    volumes:
+      - ./teamcity_server/db/data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  teamcity-server:
+    image: jetbrains/teamcity-server:latest
+    container_name: teamcity-server
+    ports:
+      - 8111:8111
+    volumes:
+      - ./teamcity_server/data:/data/teamcity_server/datadir
+      - ./teamcity_server/logs:/opt/teamcity/logs
+    depends_on:
+      - teamcity-db
+
+  teamcity-agent:
+    image: jetbrains/teamcity-minimal-agent:latest
+    container_name: teamcity-agent
+    privileged: true
+    volumes:
+      - ./teamcity_agent/conf:/data/teamcity_agent/conf
+    environment:
+      - DOCKER_IN_DOCKER=start
+      - SERVER_URL=http://teamcity-server:8111
+    depends_on:
+      - teamcity-server
